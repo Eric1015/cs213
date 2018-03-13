@@ -78,7 +78,7 @@ L3:              br   L7							# goto L7
 L4:              ld   $0x1, r2						# r2 = i = 1
 L5:              br   L7							# goto L7
 				
-				 # 0x384 (come here if a1 = 11, 13, 15, 17 or a1 < 10 or a1 > 18)
+				 # come here if a1 = 11, 13, 15, 17 or a1 < 10 or a1 > 18
 L6:              ld   $0x0, r2						# r2 = i = 0
                  br   L7							# goto L7
 L7:              mov  r2, r0						# r0 = i
