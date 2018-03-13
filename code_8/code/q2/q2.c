@@ -1,4 +1,4 @@
-int foo(int a1, int a2, int a3) {
+int q2(int a1, int a2, int a3) {
 	int i = 0;
 	switch (a1) {
 	case 10: 
@@ -33,5 +33,5 @@ int foo(int a1, int a2, int a3) {
 }
 
 int main(void) {
-	foo(0, 0, 0);
+	q2(0, 0, 0);
 }
