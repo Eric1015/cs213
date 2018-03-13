@@ -33,5 +33,5 @@ int foo(int a1, int a2, int a3) {
 }
 
 int main(void) {
-
+	foo(0, 0, 0);
 }
