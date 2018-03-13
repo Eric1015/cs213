@@ -41,13 +41,6 @@ int exec() {
   if (insOpCode == 0x5 || insOpCode > 0xf)
 	  goto DEFAULT;
 
-  int remainder = 0;
-  int decimal_number = 0;
-  for (unsigned count = 0; insOpCode > 0; count++) {
-	  remainder = insOpCode % 10;
-	  decimal_number += remainder * pow(16, count);
-	  insOpCode /= 10;
-  }
   goto *jumpTable[insOpCode];
   
   L0:
@@ -84,11 +77,6 @@ int exec() {
         goto CONT;
   L5:
       // ALU ................... 6-sd
-		for (unsigned count = 0; insOp0 > 0; count++) {
-			remainder = insOp0 % 10;
-			decimal_number += remainder * pow(16, count);
-			insOp0 /= 10;
-		}
 		if (insOp0 == 15)
 			goto IL15;
 		else if (insOp0 < 0 || insOp0 > 7)
