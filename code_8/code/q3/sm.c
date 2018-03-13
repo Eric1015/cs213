@@ -118,10 +118,10 @@ int exec() {
         pc = (((unsigned short) insOpImm) << 1) + reg [insOp0];
         break;
       case 0xd: // j *o(rr) .............. droo
-        // TODO
+		  pc = mem[reg[insOp1] + (unsigned short)insOpImm];
         break;
       case 0xe: // j*(rr,ri,4) ............. eri-
-        // TODO
+		  pc = mem[reg[insOp1] + reg[insOp2] << 2];
         break;
       case 0xf: // halt or nop ............. f?--
         if (insOp0 == 0)
