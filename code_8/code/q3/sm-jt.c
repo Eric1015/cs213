@@ -1,6 +1,7 @@
 #include "stdlib.h"
 #include "stdio.h"
 #include "string.h"
+#include "math.h"
 
 int           reg[8];
 unsigned char mem[10000*4];
