@@ -4,7 +4,6 @@
 #include "list.c"
 #include "string.h"
 
-// test add comment
 int isNumber(element_t* input) {
 	// check whether this 0 compare is correct or not
 	char* str = (char*)input;
@@ -25,7 +24,7 @@ void concatString(element_t* out_data, element_t in_data1, element_t in_data2) {
 	int* in1 = (int*)in_data1;
 	char* in2 = (char*)in_data2;
 	//if (*out == NULL)
-		//*out = malloc(sizeof(char));
+		//*out = malloc(sizeof(char*));
 	//memcpy(*out, in2, *in1);
 }
 
