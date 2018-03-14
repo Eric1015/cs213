@@ -43,9 +43,19 @@ void printOnSameLine(element_t input) {
 
 int main(int argc, char** argv) {
 	struct list* input = list_create();
-	for (unsigned i = 1; i < argc; i++) {
-		list_append(input, argv[i]);
-	}
+	//for (unsigned i = 1; i < argc; i++) {
+		//list_append(input, argv[i]);
+	//}
+	
+	list_append(input, "4");
+	list_append(input, "apple");
+	list_append(input, "3");
+	list_append(input, "peach");
+	list_append(input, "2");
+	list_append(input, "3");
+	list_append(input, "grape");
+	list_append(input, "plum");
+
 	struct list* numList = list_create();
 	list_filter(isNumber, numList, input);
 	struct list* stringList = list_create();
