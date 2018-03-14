@@ -6,6 +6,7 @@
 
 // test add comment
 // add new comment
+// add another comment
 int isNumber(element_t* input) {
 	// check whether this 0 compare is correct or not
 	char* str = (char*)input;
