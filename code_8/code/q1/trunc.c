@@ -4,7 +4,6 @@
 #include "list.c"
 #include "string.h"
 
-
 int isNumber(element_t* input) {
 	// check whether this 0 compare is correct or not
 	char* str = (char*)input;
