@@ -5,6 +5,7 @@
 #include "string.h"
 
 // test add comment
+// add new comment
 int isNumber(element_t* input) {
 	// check whether this 0 compare is correct or not
 	char* str = (char*)input;
