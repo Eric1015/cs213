@@ -10,29 +10,46 @@
 int isNumber(element_t* input) {
 	// check whether this 0 compare is correct or not
 	char* str = (char*)input;
-	if (strcmp(str, "0") == 0)
+	if (strcmp(str, "0") == 0) {
+		printf("%s to %d\n", str, atoi(str));
 		return 1;
-	if (atoi(str) == 0)
+	}
+	if (atoi(str) == 0) {
 		return 0;
-	else
+	}
+	else {
+		printf("%s to %d\n", str, atoi(str));
 		return 1;
+	}
 }
 
 int isString(element_t* input) {
-	return !isNumber(input);
+	if (isNumber(input) == 0)
+		return 1;
+	else
+		return 0;
 }
 
 void concatString(element_t* out_data, element_t in_data1, element_t in_data2) {
 	char** out = (char**)out_data;
-	int* in1 = (int*)in_data1;
+	char* in1 = (char*)in_data1;
 	char* in2 = (char*)in_data2;
-	//if (*out == NULL)
-		//*out = malloc(sizeof(char));
-	//memcpy(*out, in2, *in1);
+	printf("%s\n", in2);
+	printf("%d\n", strlen(in2));
+	if (*out == NULL)
+		*out = malloc(sizeof(char) * strlen(in2));
+	for (unsigned i = 0; i < atoi(in1); i++) {
+		out[i] = in2[i];
+		printf("Successfully done %d\n", i);
+		if (atoi(in1) - i == 1)
+			out[i + 1] = '/0';
+	}
+	printf("%s\n", out);
 }
 
 void print(element_t input) {
-	char* output = (char*)input;
+	char** output = (char**)input;
+	printf("%c\n", output);
 	printf("%s\n", output);
 }
 
@@ -42,6 +59,11 @@ void printOnSameLine(element_t input) {
 }
 
 int main(int argc, char** argv) {
+	char* a;
+	a = "apple";
+	char* dst;
+	memcpy(dst, a, 3);
+	printf("%s\n", dst);
 	struct list* input = list_create();
 	//for (unsigned i = 1; i < argc; i++) {
 		//list_append(input, argv[i]);
