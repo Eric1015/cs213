@@ -4,9 +4,6 @@
 #include "list.c"
 #include "string.h"
 
-// test add comment
-// add new comment
-// add another comment
 int isNumber(element_t* input) {
 	// check whether this 0 compare is correct or not
 	char* str = (char*)input;
@@ -37,19 +34,19 @@ void concatString(element_t* out_data, element_t in_data1, element_t in_data2) {
 	printf("%s\n", in2);
 	printf("%d\n", strlen(in2));
 	if (*out == NULL)
-		*out = malloc(sizeof(char) * strlen(in2));
-	for (unsigned i = 0; i < atoi(in1); i++) {
-		out[i] = in2[i];
-		printf("Successfully done %d\n", i);
-		if (atoi(in1) - i == 1)
-			out[i + 1] = '/0';
-	}
-	printf("%s\n", out);
+		*out = malloc(sizeof(char) * (int)strlen(in2));
+	int size = atoi(in1);
+	strcpy(*out, in2);
+	printf("%c\n", (*(*out + 1)));
+	printf("%d\n", size);
+	printf("%s\n", *out);
+
+	*(*out + size) = 0;
+	printf("%s\n", *out);
 }
 
 void print(element_t input) {
-	char** output = (char**)input;
-	printf("%c\n", output);
+	char* output = (char*)input;
 	printf("%s\n", output);
 }
 
@@ -59,11 +56,6 @@ void printOnSameLine(element_t input) {
 }
 
 int main(int argc, char** argv) {
-	char* a;
-	a = "apple";
-	char* dst;
-	memcpy(dst, a, 3);
-	printf("%s\n", dst);
 	struct list* input = list_create();
 	//for (unsigned i = 1; i < argc; i++) {
 		//list_append(input, argv[i]);
