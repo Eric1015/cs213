@@ -5,7 +5,6 @@
 #include "string.h"
 
 int isNumber(element_t* input) {
-	// check whether this 0 compare is correct or not
 	char* str = (char*)input;
 	if (strcmp(str, "0") == 0)
 		return 1;
@@ -27,10 +26,11 @@ void concatString(element_t* out_data, element_t in_data1, element_t in_data2) {
 	char* in1 = (char*)in_data1;
 	char* in2 = (char*)in_data2;
 	if (*out == NULL)
-		*out = malloc(sizeof(char) * (int)strlen(in2));
+		*out = malloc(sizeof(in2));
 	int size = atoi(in1);
 	strcpy(*out, in2);
 
+	if (size < strlen(in2))
 	*(*out + size) = 0;
 }
 
@@ -42,6 +42,30 @@ void print(element_t input) {
 void printOnSameLine(element_t input) {
 	char* output = (char*)input;
 	printf("%s ", output);
+}
+
+void pointNull(element_t input) {
+	element_t* data = input;;
+	data = NULL;
+}
+
+void stringLength(element_t* result, element_t input) {
+	int** r = (int**)result;
+	char* str = (char*)input;
+	if (*r == NULL)
+		*r = malloc(sizeof(int));
+	**r = strlen(str);
+}
+
+void getMax(element_t* address, element_t output, element_t input) {
+	int** a = (int**)address;
+	int* o = (int*)output;
+	char* i = (char*)input;
+	int target = strlen(i);
+	if (*a == NULL)
+		*a = malloc(sizeof(int));
+	if (*o < target)
+		**a = target;
 }
 
 int main(int argc, char** argv) {
@@ -56,8 +80,18 @@ int main(int argc, char** argv) {
 
 	struct list* output = list_create();
 	list_map2(concatString, output, numList, stringList);
+	
+	int max = 0;
+	int* mp = &max;
+	list_foldl(getMax, (element_t*)&mp, output);
 
 	list_foreach(print, output);
 	list_foreach(printOnSameLine, output);
-	printf("\n%d\n", list_len(output));
+	printf("\n%d\n", max);
+
+	list_foreach(free, output);
+	list_destroy(input);
+	list_destroy(output);
+	list_destroy(numList);
+	list_destroy(stringList);
 }
