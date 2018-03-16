@@ -16,16 +16,22 @@ int isNumber(element_t* input) {
 }
 
 int isString(element_t* input) {
-	return !isNumber(input);
+	if (isNumber(input) == 0)
+		return 1;
+	else
+		return 0;
 }
 
 void concatString(element_t* out_data, element_t in_data1, element_t in_data2) {
 	char** out = (char**)out_data;
-	int* in1 = (int*)in_data1;
+	char* in1 = (char*)in_data1;
 	char* in2 = (char*)in_data2;
 	if (*out == NULL)
 		*out = malloc(sizeof(char) * (int)strlen(in2));
-	//memcpy(*out, in2, *in1);
+	int size = atoi(in1);
+	strcpy(*out, in2);
+
+	*(*out + size) = 0;
 }
 
 void print(element_t input) {

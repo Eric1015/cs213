@@ -178,7 +178,7 @@ void list_foldl (void (*f) (element_t*, element_t, element_t), element_t* out_el
  *    returns true (1) iff in should be included in out_list and 0 otherwise
  */
 void list_filter (int (*f) (element_t), struct list* out_list, struct list* in_list) {
-	for (unsigned i = 1; i < in_list->len; i++) {
+	for (unsigned i = 0; i < in_list->len; i++) {
 		if (f(in_list->data[i]) != 0)
 			list_append(out_list, in_list->data[i]);
 	}
