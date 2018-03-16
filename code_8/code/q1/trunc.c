@@ -23,8 +23,8 @@ void concatString(element_t* out_data, element_t in_data1, element_t in_data2) {
 	char** out = (char**)out_data;
 	int* in1 = (int*)in_data1;
 	char* in2 = (char*)in_data2;
-	//if (*out == NULL)
-		//*out = malloc(sizeof(char));
+	if (*out == NULL)
+		*out = malloc(sizeof(char) * (int)strlen(in2));
 	//memcpy(*out, in2, *in1);
 }
 
