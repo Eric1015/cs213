@@ -1,7 +1,6 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "list.h"
-#include "list.c"
 #include "string.h"
 
 int isNumber(element_t* input) {
@@ -34,7 +33,7 @@ void concatString(element_t* out_data, element_t in_data1, element_t in_data2) {
 	*(*out + size) = 0;
 }
 
-void print(element_t input) {
+void printLine(element_t input) {
 	char* output = (char*)input;
 	printf("%s\n", output);
 }
@@ -85,7 +84,7 @@ int main(int argc, char** argv) {
 	int* mp = &max;
 	list_foldl(getMax, (element_t*)&mp, output);
 
-	list_foreach(print, output);
+	list_foreach(printLine, output);
 	list_foreach(printOnSameLine, output);
 	printf("\n%d\n", max);
 
