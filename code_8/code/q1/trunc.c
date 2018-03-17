@@ -87,8 +87,6 @@ int main(int argc, char** argv) {
 
 	struct list* output = list_create();
 	list_map2(concatString, output, numList, stringList);
-
-	char** strArray;
 	
 	intptr_t mp = 0;
 	list_foldl(getMax, (element_t*)&mp, numList);
