@@ -27,23 +27,6 @@ void isString(element_t* output, element_t input0, element_t input1) {
 int isPositive(element_t input) {
 	intptr_t in = (intptr_t)input;
 	if (in < 0)
-		return 0;
-	else
-		return 1;
-}
-
-int isNotNull(element_t input) {
-	char* in = (char*)input;
-	if (in == NULL)
-		return 0;
-	else
-		return 1;
-}
-
-void concatString(element_t* out_data, element_t in_data1, element_t in_data2) {
-	char** out = (char**)out_data;
-	intptr_t in1 = (intptr_t)in_data1;
-	char* in2 = (char*)in_data2;
 	*out = strdup(in2);
 	int size = in1;
 
@@ -87,8 +70,6 @@ int main(int argc, char** argv) {
 
 	struct list* output = list_create();
 	list_map2(concatString, output, numList, stringList);
-
-	char** strArray;
 	
 	intptr_t mp = 0;
 	list_foldl(getMax, (element_t*)&mp, numList);
