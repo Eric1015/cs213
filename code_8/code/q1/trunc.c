@@ -1,36 +1,54 @@
 #include "stdio.h"
 #include "stdlib.h"
+#include "stdint.h"
 #include "list.h"
 #include "string.h"
 
-int isNumber(element_t* input) {
-	char* str = (char*)input;
-	if (strcmp(str, "0") == 0)
-		return 1;
-	if (atoi(str) == 0)
+void convertNumber(element_t* output, element_t input) {
+	intptr_t* out = (intptr_t*)output;
+	char*     a = input;
+	char* ep;
+	*out = strtol(a, &ep, 0);
+	if (*ep) {
+		*out = -1;
+	}
+}
+
+void isString(element_t* output, element_t input0, element_t input1) {
+	intptr_t in0 = (intptr_t)input0;
+	char* in1 = (char*)input1;
+	char** out = (char**)output;
+	if (in0 != -1)
+		*out = NULL;
+	else
+		*out = in1;
+}
+
+int isPositive(element_t input) {
+	intptr_t in = (intptr_t)input;
+	if (in < 0)
 		return 0;
 	else
 		return 1;
 }
 
-int isString(element_t* input) {
-	if (isNumber(input) == 0)
-		return 1;
-	else
+int isNotNull(element_t input) {
+	char* in = (char*)input;
+	if (in == NULL)
 		return 0;
+	else
+		return 1;
 }
 
 void concatString(element_t* out_data, element_t in_data1, element_t in_data2) {
 	char** out = (char**)out_data;
-	char* in1 = (char*)in_data1;
+	intptr_t in1 = (intptr_t)in_data1;
 	char* in2 = (char*)in_data2;
-	if (*out == NULL)
-		*out = malloc(sizeof(in2));
-	int size = atoi(in1);
-	strcpy(*out, in2);
+	*out = strdup(in2);
+	int size = in1;
 
 	if (size < strlen(in2))
-	*(*out + size) = 0;
+		(*out)[size] = 0;
 }
 
 void printLine(element_t input) {
@@ -43,28 +61,12 @@ void printOnSameLine(element_t input) {
 	printf("%s ", output);
 }
 
-void pointNull(element_t input) {
-	element_t* data = input;;
-	data = NULL;
-}
-
-void stringLength(element_t* result, element_t input) {
-	int** r = (int**)result;
-	char* str = (char*)input;
-	if (*r == NULL)
-		*r = malloc(sizeof(int));
-	**r = strlen(str);
-}
-
 void getMax(element_t* address, element_t output, element_t input) {
-	int** a = (int**)address;
-	int* o = (int*)output;
-	char* i = (char*)input;
-	int target = strlen(i);
-	if (*a == NULL)
-		*a = malloc(sizeof(int));
-	if (*o < target)
-		**a = target;
+	intptr_t* a = (intptr_t*)address;
+	intptr_t o = (intptr_t)output;
+	intptr_t i = (intptr_t)input;
+	if (o < i)
+		*a = i;
 }
 
 int main(int argc, char** argv) {
@@ -72,23 +74,32 @@ int main(int argc, char** argv) {
 	for (unsigned i = 1; i < argc; i++) {
 		list_append(input, argv[i]);
 	}
+	struct list* temporalNumList = list_create();
+	list_map1(convertNumber, temporalNumList, input);
+	struct list* temporalStringList = list_create();
+	list_map2(isString, temporalStringList, temporalNumList, input);
+
 	struct list* numList = list_create();
-	list_filter(isNumber, numList, input);
+	list_filter(isPositive, numList, temporalNumList);
+
 	struct list* stringList = list_create();
-	list_filter(isString, stringList, input);
+	list_filter(isNotNull, stringList, temporalStringList);
 
 	struct list* output = list_create();
 	list_map2(concatString, output, numList, stringList);
+
+	char** strArray;
 	
-	int max = 0;
-	int* mp = &max;
-	list_foldl(getMax, (element_t*)&mp, output);
+	intptr_t mp = 0;
+	list_foldl(getMax, (element_t*)&mp, numList);
 
 	list_foreach(printLine, output);
 	list_foreach(printOnSameLine, output);
-	printf("\n%d\n", max);
+	printf("\n%d\n", mp);
 
 	list_foreach(free, output);
+	list_destroy(temporalNumList);
+	list_destroy(temporalStringList);
 	list_destroy(input);
 	list_destroy(output);
 	list_destroy(numList);
