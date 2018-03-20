@@ -1,0 +1,22 @@
+./aRead 10
+207
+
+real	0m0.015s
+user	0m0.011s
+sys	0m0.004s
+
+
+time ./aRead 100
+1644
+
+real	0m0.015s
+user	0m0.014s
+sys	0m0.000s
+
+
+time ./aRead 1000
+16193
+
+real	0m0.017s
+user	0m0.012s
+sys	0m0.004s

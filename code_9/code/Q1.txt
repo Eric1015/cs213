@@ -1,0 +1,23 @@
+time ./sRead 10
+207
+
+real	0m0.115s
+user	0m0.108s
+sys	0m0.005s
+
+
+time ./sRead 100
+1644
+
+real	0m1.102s
+user	0m1.014s
+sys	0m0.012s
+
+
+time ./sRead 1000
+16193
+
+real	0m11.006s
+user	0m10.928s
+sys	0m0.033s
+

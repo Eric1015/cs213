@@ -20,6 +20,8 @@ void interrupt_service_routine () {
 
 void handle_read (void* resultv, void* not_used) {
   // TODO add result to sum
+	int* result = (int*)resultv;
+	sum += *result;
 }
 
 void handle_read_and_exit (void* resultv, void* not_used) {
@@ -48,6 +50,17 @@ int main (int argc, char** argv) {
 
   // Sum Blocks
   // TODO
+  for (int blockno = 0; blockno < num_blocks; blockno++) {
+	  int result;
+	  if (blockno < num_blocks - 1) {
+		  queue_enqueue(pending_read_queue, &result, NULL, handle_read);
+		  disk_schedule_read(&result, blockno);
+	  }
+	  else {
+		  queue_enqueue(pending_read_queue, &result, NULL, handle_read_and_exit);
+		  disk_schedule_read(&result, blockno);
+	  }
+  }
   while (1); // inifinite loop so that main doesn't return before all of the reads complete
 }
 
