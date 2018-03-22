@@ -10,15 +10,26 @@
 queue_t pending_read_queue;
 
 void interrupt_service_routine() {
-  // TODO
+	void* val;
+	void* val2;
+	void(*callback)(void*, void*);
+	queue_dequeue(pending_read_queue, &val, &val2, &callback);
+	callback(val, val2);
 }
 
 void handleOtherReads (void* resultv, void* countv) {
-  // TODO
+	int* next = (int*)resultv;
+	int* count = (int*)countv;
+	if (*count <= 1) {
+		printf("%d\n", *next);
+		exit(EXIT_SUCCESS);
+	}
 }
 
 void handleFirstRead (void* resultv, void* countv) {
-  // TODO
+	int* num_blocks = (int*)resultv;
+	int* start = (int*)countv;
+	*start = *num_blocks;
 }
 
 int main (int argc, char** argv) {
@@ -40,6 +51,14 @@ int main (int argc, char** argv) {
 
 
   // Start the Hunt
-  // TODO
+  int next_block;
+  int i = 0;
+  queue_enqueue(pending_read_queue, &next_block, &i, handleFirstRead);
+  disk_schedule_read(&next_block, starting_block_number);
+  while (!i);
+  for (i; i > 0; i--) {
+	  queue_enqueue(pending_read_queue, &next_block, &i, handleOtherReads);
+	  disk_schedule_read(&next_block, next_block);
+  }
   while (1); // inifinite loop so that main doesn't return before hunt completes
 }
