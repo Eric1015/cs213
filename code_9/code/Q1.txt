@@ -21,3 +21,7 @@ real	0m11.006s
 user	0m10.928s
 sys	0m0.033s
 
+
+This squencial code is easy to follow, but takes the longest time on execution.
+Most of the time is spent on waiting for the return of disk_read, which has been represented
+on the output (big difference between real and sys time).

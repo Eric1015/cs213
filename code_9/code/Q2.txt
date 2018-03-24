@@ -20,3 +20,9 @@ time ./aRead 1000
 real	0m0.017s
 user	0m0.012s
 sys	0m0.004s
+
+
+This asynchorous code is harder to follow as the procedure can go back and forth between several functions.
+However, it runs the fastest since it will not need to wait for the return of disk read and
+just continue asking for the next disk read.
+It will deal with the return value whenever CPU receives a ISR.

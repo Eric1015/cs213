@@ -1,0 +1,31 @@
+time ./tRead 10
+207
+
+real	0m0.027s
+user	0m0.008s
+sys	0m0.018s
+
+
+
+time ./tRead 100
+1644
+
+real	0m0.111s
+user	0m0.008s
+sys	0m0.101s
+
+
+
+./tRead 1000
+16193
+
+real	0m1.084s
+user	0m0.024s
+sys	0m1.059s
+
+
+Using thread can improve the execution performance than squencial programming.
+One more thing that is good about thread is that the code will not be as hard as asynchoronous programming.
+For example, we want to add the result from disk read to sum after we get the return.
+In aRead.c, this will be done in handle_read, but it is arranged before disk read in the code, so it makes programmer harder to follow.
+However, in tRead.c, this will be done in read_block, which has the usual order of disk read and addition.
