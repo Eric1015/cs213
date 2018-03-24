@@ -33,6 +33,10 @@ void handleFirstRead (void* resultv, void* countv) {
 	int* num_blocks = (int*)resultv;
 	int* start = (int*)countv;
 	*start = *num_blocks;
+	if (*start <= 0) {
+		printf("%d\n", *num_blocks);
+		exit(EXIT_SUCCESS);
+	}
 	queue_enqueue(pending_read_queue, num_blocks, start, handleOtherReads);
 	disk_schedule_read(num_blocks, *num_blocks);
 }
