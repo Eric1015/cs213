@@ -24,12 +24,22 @@ void handleOtherReads (void* resultv, void* countv) {
 		printf("%d\n", *next);
 		exit(EXIT_SUCCESS);
 	}
+	*count = *count - 1;
+	printf("The result is %d\n", *next);
+	printf("The current count is %d\n", *count);
+	printf("The blockno is %d ", *next);
+	queue_enqueue(pending_read_queue, next, count, handleOtherReads);
+	disk_schedule_read(next, *next);
 }
 
 void handleFirstRead (void* resultv, void* countv) {
 	int* num_blocks = (int*)resultv;
 	int* start = (int*)countv;
 	*start = *num_blocks;
+	printf("The first result is %d\n", *num_blocks);
+	printf("%d\n", *start);
+	queue_enqueue(pending_read_queue, num_blocks, start, handleOtherReads);
+	disk_schedule_read(num_blocks, *num_blocks);
 }
 
 int main (int argc, char** argv) {
@@ -52,13 +62,8 @@ int main (int argc, char** argv) {
 
   // Start the Hunt
   int next_block;
-  int i = 0;
+  int i;
   queue_enqueue(pending_read_queue, &next_block, &i, handleFirstRead);
   disk_schedule_read(&next_block, starting_block_number);
-  while (!i);
-  for (i; i > 0; i--) {
-	  queue_enqueue(pending_read_queue, &next_block, &i, handleOtherReads);
-	  disk_schedule_read(&next_block, next_block);
-  }
   while (1); // inifinite loop so that main doesn't return before hunt completes
 }
