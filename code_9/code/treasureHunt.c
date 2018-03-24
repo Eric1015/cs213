@@ -25,9 +25,6 @@ void handleOtherReads (void* resultv, void* countv) {
 		exit(EXIT_SUCCESS);
 	}
 	*count = *count - 1;
-	printf("The result is %d\n", *next);
-	printf("The current count is %d\n", *count);
-	printf("The blockno is %d ", *next);
 	queue_enqueue(pending_read_queue, next, count, handleOtherReads);
 	disk_schedule_read(next, *next);
 }
@@ -36,8 +33,6 @@ void handleFirstRead (void* resultv, void* countv) {
 	int* num_blocks = (int*)resultv;
 	int* start = (int*)countv;
 	*start = *num_blocks;
-	printf("The first result is %d\n", *num_blocks);
-	printf("%d\n", *start);
 	queue_enqueue(pending_read_queue, num_blocks, start, handleOtherReads);
 	disk_schedule_read(num_blocks, *num_blocks);
 }
