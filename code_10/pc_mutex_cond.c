@@ -16,49 +16,48 @@ int histogram [MAX_ITEMS+1]; // histogram [i] == # of times list stored i items
 
 int items = 0;
 
-spinlock_t t1;
-spinlock_t t2;
-spinlock_t t3;
+uthread_mutex_t mx;
+
+uthread_cond_t GreaterThanZero;
+uthread_cond_t LessThanMax;
 
 void* producer (void* v) {
+	uthread_mutex_lock(mx);
 	for (int i = 0; i < NUM_ITERATIONS; i++) {
 		while (1) {
 			while (items >= MAX_ITEMS) {
-				spinlock_lock(&t2);
+				uthread_cond_wait(LessThanMax);
 				producer_wait_count++;
-				spinlock_unlock(&t2);
 			}
-			spinlock_lock(&t1);
 			if (items < MAX_ITEMS) {
 				break;
 			}
-			spinlock_unlock(&t1);
 		}
 		items++;
 		histogram[items]++;
-		spinlock_unlock(&t1);
+		uthread_cond_signal(GreaterThanZero);
 	}
+	uthread_mutex_unlock(mx);
   return NULL;
 }
 
 void* consumer (void* v) {
+	uthread_mutex_lock(mx);
 	for (int i = 0; i < NUM_ITERATIONS; i++) {
 		while (1) {
 			while (items <= 0) {
-				spinlock_lock(&t3);
+				uthread_cond_wait(GreaterThanZero);
 				consumer_wait_count++;
-				spinlock_unlock(&t3);
 			}
-			spinlock_lock(&t1);
 			if (items > 0) {
 				break;
 			}
-			spinlock_unlock(&t1);
 		}
 		items--;
 		histogram[items]++;
-		spinlock_unlock(&t1);
+		uthread_cond_signal(LessThanMax);
 	}
+	uthread_mutex_unlock(mx);
   return NULL;
 }
 
@@ -66,10 +65,11 @@ int main (int argc, char** argv) {
   uthread_t t[4];
 
   uthread_init (4);
-  
-  spinlock_create(&t1);
-  spinlock_create(&t2);
-  spinlock_create(&t3);
+
+  mx = uthread_mutex_create();
+
+  GreaterThanZero = uthread_cond_create(mx);
+  LessThanMax = uthread_cond_create(mx);
 
   t[0] = uthread_create(producer, 0);
   t[1] = uthread_create(producer, 0);
@@ -80,6 +80,11 @@ int main (int argc, char** argv) {
   uthread_join(t[1], 0);
   uthread_join(t[2], 0);
   uthread_join(t[3], 0);
+
+  uthread_cond_destroy(GreaterThanZero);
+  uthread_cond_destroy(LessThanMax);
+
+  uthread_mutex_destroy(mx);
 
   printf ("producer_wait_count=%d, consumer_wait_count=%d\n", producer_wait_count, consumer_wait_count);
   printf ("items value histogram:\n");
