@@ -22,42 +22,32 @@ uthread_cond_t GreaterThanZero;
 uthread_cond_t LessThanMax;
 
 void* producer (void* v) {
-	uthread_mutex_lock(mx);
 	for (int i = 0; i < NUM_ITERATIONS; i++) {
-		while (1) {
-			while (items >= MAX_ITEMS) {
-				uthread_cond_wait(LessThanMax);
-				producer_wait_count++;
-			}
-			if (items < MAX_ITEMS) {
-				break;
-			}
+		uthread_mutex_lock(mx);
+		while (items >= MAX_ITEMS) {
+			uthread_cond_wait(LessThanMax);
+			producer_wait_count++;
 		}
 		items++;
 		histogram[items]++;
 		uthread_cond_signal(GreaterThanZero);
+		uthread_mutex_unlock(mx);
 	}
-	uthread_mutex_unlock(mx);
   return NULL;
 }
 
 void* consumer (void* v) {
-	uthread_mutex_lock(mx);
 	for (int i = 0; i < NUM_ITERATIONS; i++) {
-		while (1) {
-			while (items <= 0) {
-				uthread_cond_wait(GreaterThanZero);
-				consumer_wait_count++;
-			}
-			if (items > 0) {
-				break;
-			}
+		uthread_mutex_lock(mx);
+		while (items <= 0) {
+			uthread_cond_wait(GreaterThanZero);
+			consumer_wait_count++;
 		}
 		items--;
 		histogram[items]++;
 		uthread_cond_signal(LessThanMax);
+		uthread_mutex_unlock(mx);
 	}
-	uthread_mutex_unlock(mx);
   return NULL;
 }
 

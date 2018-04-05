@@ -81,7 +81,7 @@ int main (int argc, char** argv) {
   uthread_join(t[2], 0);
   uthread_join(t[3], 0);
 
-  printf ("producer_wait_count=%d, consumer_wait_count=%d\n", producer_wait_count, consumer_wait_count);
+  printf ("producer_wait_count=%d\nconsumer_wait_count=%d\n", producer_wait_count, consumer_wait_count);
   printf ("items value histogram:\n");
   int sum=0;
   for (int i = 0; i <= MAX_ITEMS; i++) {
