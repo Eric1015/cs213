@@ -24,12 +24,20 @@ enum Endianness {LITTLE = 0, BIG = 1};
 const static enum Endianness oppositeEnd [] = {BIG, LITTLE};
 
 struct Well {
-  // TODO
+	int nowEndian;
+	int currentPopulation;
+	uthread_mutex_t mx;
+	uthread_cond_t LessThanMax;
+	uthread_cond_t ChangeEndian;
 };
 
 struct Well* createWell() {
   struct Well* Well = malloc (sizeof (struct Well));
   // TODO
+  Well->currentPopulation = 0;
+  Well->mx = uthread_mutex_create();
+  Well->LessThanMax = uthread_cond_create(Well->mx);
+  Well->ChangeEndian = uthread_cond_create(Well->mx);
   return Well;
 }
 
@@ -43,11 +51,20 @@ uthread_mutex_t waitingHistogrammutex;
 int             occupancyHistogram       [2] [MAX_OCCUPANCY + 1];
 
 void enterWell (enum Endianness g) {
-  // TODO
+	while (Well->currentPopulation >= MAX_OCCUPANCY) {
+		uthread_cond_wait(Well->LessThanMax);
+	}
+	while (oppositeEnd[g] == Well->nowEndian) {
+		uthread_cond_wait(Well->ChangeEndian);
+	}
+
 }
 
 void leaveWell() {
-  // TODO
+	uthread_mutex_lock(Well->mx);
+	Well->currentPopulation--;
+	uthread_mutex_unlock(Well->mx);
+	uthread_cond_signal(Well->LessThanMax);
 }
 
 void recordWaitingTime (int waitingTime) {

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include <assert.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -35,6 +36,11 @@ struct Agent* createAgent() {
 //
 // TODO
 // You will probably need to add some procedures and struct etc.
+
+uthread_t matchThread;
+uthread_t paperThread;
+uthread_t tobaccoThread;
+
 //
 
 /**
@@ -47,6 +53,83 @@ char* resource_name [] = {"", "match",   "paper", "", "tobacco"};
 
 int signal_count [5];  // # of times resource signalled
 int smoke_count  [5];  // # of times smoker with resource smoked
+
+int gotMatch = 0;
+int gotPaper = 0;
+int gotTobacco = 0;
+
+struct Smoker {
+	int infiniteResource;
+	struct Agent* agent;
+};
+
+struct Smoker* createSmoker(int resource, struct Agent* av) {
+	struct Smoker* smoker = malloc(sizeof(struct Smoker));
+	smoker->infiniteResource = resource;
+	smoker->agent = av;
+	return smoker;
+}
+
+struct Smoker* s1;
+struct Smoker* s2;
+struct Smoker* s3;
+
+void* smoke(void* v) {
+	struct Smoker* smoker = v;
+	uthread_mutex_lock(smoker->agent->mutex);
+	for (int i = 0; i < NUM_ITERATIONS; i++) {
+		while (1) {
+			if (gotMatch == 1 && gotPaper == 1 && smoker->infiniteResource == 4)
+				break;
+			else if (gotMatch == 1 && gotTobacco == 1 && smoker->infiniteResource == 2)
+				break;
+			else if (gotPaper == 1 && gotTobacco == 1 && smoker->infiniteResource == 1)
+				break;
+		}
+		smoke_count[smoker->infiniteResource]++;
+		gotMatch = 0;
+		gotPaper = 0;
+		gotTobacco = 0;
+		uthread_cond_signal(smoker->agent->smoke);
+	}
+	uthread_mutex_unlock(smoker->agent->mutex);
+}
+
+void* matchSmoker(void* v) {
+	struct Smoker* smoker = v;
+	while (gotTobacco == 0 || gotPaper == 0);
+	uthread_mutex_lock(smoker->agent->mutex);
+	smoke_count[smoker->infiniteResource]++;
+	gotMatch = 0;
+	gotPaper = 0;
+	gotTobacco = 0;
+	uthread_cond_signal(smoker->agent->smoke);
+	uthread_mutex_unlock(smoker->agent->mutex);
+}
+
+void* matchHandler(void* v) {
+	struct Agent* a = v;
+	uthread_mutex_lock(a->mutex);
+	uthread_cond_wait(a->match);
+	gotMatch = 1;
+	uthread_mutex_unlock(a->mutex);
+}
+
+void* paperHandler(void* v) {
+	struct Agent* a = v;
+	uthread_mutex_lock(a->mutex);
+	uthread_cond_wait(a->paper);
+	gotPaper = 1;
+	uthread_mutex_unlock(a->mutex);
+}
+
+void* tobaccoHandler(void* v) {
+	struct Agent* a = v;
+	uthread_mutex_lock(a->mutex);
+	uthread_cond_wait(a->tobacco);
+	gotTobacco = 1;
+	uthread_mutex_unlock(a->mutex);
+}
 
 /**
  * This is the agent procedure.  It is complete and you shouldn't change it in
@@ -61,6 +144,9 @@ void* agent (void* av) {
   
   uthread_mutex_lock (a->mutex);
     for (int i = 0; i < NUM_ITERATIONS; i++) {
+		printf("start s1 thread");
+		uthread_join(uthread_create(matchSmoker, s1), 0);
+		printf("Now moves onto rest of agent function stuffs");
       int r = random() % 3;
       signal_count [matching_smoker [r]] ++;
       int c = choices [r];
@@ -86,7 +172,16 @@ void* agent (void* av) {
 int main (int argc, char** argv) {
   uthread_init (7);
   struct Agent*  a = createAgent();
+
   // TODO
+  s1 = createSmoker(MATCH, a);
+  s2 = createSmoker(PAPER, a);
+  s3 = createSmoker(TOBACCO, a);
+
+  matchThread = uthread_create(matchHandler, a);
+  paperThread = uthread_create(paperHandler, a);
+  tobaccoThread = uthread_create(tobaccoHandler, a);
+
   uthread_join (uthread_create (agent, a), 0);
   assert (signal_count [MATCH]   == smoke_count [MATCH]);
   assert (signal_count [PAPER]   == smoke_count [PAPER]);

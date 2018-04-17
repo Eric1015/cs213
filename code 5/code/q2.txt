@@ -1,0 +1,7 @@
+After assign A and B to the stack, A is at the bottom of the stack and B is at the top of it.
+Then, in pop(), a pointer is assigned to the top of the stack which is the address of B.
+However, in pop(), the address of B is freed, so it is considered that address is empty.
+Then, the next push() will have C to be at the address of where B used to be.
+This means that the address of B is overwritten by C.
+Thus, when printing out the result, the pointer goes to the previous address, but gets C there.
+This is why the output is C D C A.

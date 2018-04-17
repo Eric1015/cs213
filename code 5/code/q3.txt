@@ -1,0 +1,10 @@
+The program has a dangle pointer because there is a pointer to the freed destination.
+
+In the function list_add_element, it creates a element_t pointer to e at line 41 "element_t e = malloc (sizeof (*e));".
+In the function tree_insert_node_helper, it creates a node_t pointer at line 51 "(*np)->e    = e;" to the same e from the one in list_add_element function.
+
+Thus, there are at least two pointers point to e now.
+
+After several operation, pointers to e other than these two will be deleted.
+Then, inside list_delete_element, it frees the address of e at line 68 "free (e);" even though the pointer from tree_insert_node_helper is still pointing to e.
+Therefore, this causes a dangling pointer as the second pointer lost the contents in the address it points to.
